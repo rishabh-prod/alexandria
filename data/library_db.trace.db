@@ -1,0 +1,6 @@
+2025-03-01 20:44:28.486489+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOOKS" not found (this database is empty); SQL statement:
+select b1_0.id,b1_0.category,b1_0.location,b1_0.notes,b1_0.read_status,b1_0.title from books b1_0 where b1_0.id=? [42104-232]
+2025-03-01 20:44:36.739859+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOOKS" not found (this database is empty); SQL statement:
+insert into books (category,location,notes,read_status,title,id) values (?,?,?,?,?,default) [42104-232]
