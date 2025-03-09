@@ -55,8 +55,14 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public List<Book> searchBooks(@RequestParam(required = false) String title, 
-                                @RequestParam(required = false) String category) {
-        return bookService.searchBooks(title, category);
+    public ResponseEntity<List<Book>> searchBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Boolean read,
+            @RequestParam(required = false) String notes) {
+
+        List<Book> books = bookService.searchBooks(title, category, status, read, notes);
+        return ResponseEntity.ok(books);
     }
 }

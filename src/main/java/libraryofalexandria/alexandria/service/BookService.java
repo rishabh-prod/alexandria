@@ -1,5 +1,8 @@
 package libraryofalexandria.alexandria.service;
 
+import libraryofalexandria.alexandria.exception.BookNotFoundException;
+import libraryofalexandria.alexandria.exception.InvalidBookException;
+import libraryofalexandria.alexandria.exception.InvalidSearchCriteriaException;
 import libraryofalexandria.alexandria.model.Book;
 import libraryofalexandria.alexandria.repository.BookRepository;
 import org.springframework.stereotype.Service;
@@ -35,12 +38,19 @@ public class BookService {
 
     public Book findById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found"));
     }
     
-    public Book addBook(Book book){
-        return bookRepository.save(book);
+    public Book addBook(Book book) {
+    if (book.getTitle() == null || book.getTitle().trim().isEmpty()) {
+        throw new InvalidBookException("Title cannot be empty");
     }
+    if (book.getCategory() == null || book.getCategory().trim().isEmpty()) {
+        throw new InvalidBookException("Category cannot be empty");
+    }
+    return bookRepository.save(book);
+}
+
     // Service method to update a book's details
     public Book updateBook(Long id, Book updatedBook) {
         return bookRepository.findById(id)
@@ -53,7 +63,7 @@ public class BookService {
                 book.setNotes(updatedBook.getNotes());
                 return bookRepository.save(book); // Save updated book
             })
-            .orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
+            .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found"));
     }
     public Book deleteBook(Long id) {
         return bookRepository.findById(id)
@@ -61,14 +71,24 @@ public class BookService {
                 bookRepository.delete(book); // Delete the book
                 return book; // Return the deleted book details
             })
-            .orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
+            .orElseThrow(() -> new BookNotFoundException("Book with ID " + id + " not found"));
     }
 
     public List<Book> getBooksByCategory(String category){
         return bookRepository.findByCategory(category);
     }
 
-    public List<Book> searchBooks(String title, String category) {
-        return bookRepository.searchBooks(title, category);
+    public List<Book> searchBooks(String title, String category, String status, Boolean read, String notes) {
+        if ((title == null || title.trim().isEmpty()) &&
+            (category == null || category.trim().isEmpty()) &&
+            (status == null || status.trim().isEmpty()) &&
+            read == null &&
+            (notes == null || notes.trim().isEmpty())) {
+            throw new InvalidSearchCriteriaException("At least one search parameter must be provided.");
+        }
+    
+        return bookRepository.searchBooks(title, category, status, read, notes);
     }
+    
 }
+    

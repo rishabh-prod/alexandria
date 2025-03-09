@@ -16,6 +16,15 @@ public interface BookRepository extends JpaRepository<Book, Long>{
     // JpaRepository provides built-in CRUD operations (Create, Read, Update, Delete)
     // Custom method to find books by category
     List<Book> findByCategory(String category); 
-    @Query("SELECT b FROM Book b WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND (:category IS NULL OR LOWER(b.category) LIKE LOWER(CONCAT('%', :category, '%')))")
-    List<Book> searchBooks(@Param("title") String title, @Param("category") String category);    
+    @Query("SELECT b FROM Book b WHERE " +
+    "(:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
+    "(:category IS NULL OR LOWER(b.category) LIKE LOWER(CONCAT('%', :category, '%'))) AND " +
+    "(:status IS NULL OR LOWER(b.status) LIKE LOWER(CONCAT('%', :status, '%'))) AND " +
+    "(:read IS NULL OR b.isRead = :read) AND " +
+    "(:notes IS NULL OR LOWER(b.notes) LIKE LOWER(CONCAT('%', :notes, '%')))")
+    List<Book> searchBooks(@Param("title") String title, 
+                    @Param("category") String category, 
+                    @Param("status") String status, 
+                    @Param("read") Boolean read, 
+                    @Param("notes") String notes);
 }
